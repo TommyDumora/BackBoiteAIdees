@@ -1,4 +1,5 @@
 using BoiteAIdees.Context;
+using BoiteAIdees.Services.BoiteAIdeesService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BoiteAIdeesContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BoiteAIdees")));
-// builder.Services.AddScoped<>();
+builder.Services.AddScoped<IBoiteAIdeesService, BoiteAIdeesService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
