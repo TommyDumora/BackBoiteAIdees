@@ -70,3 +70,6 @@ C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\Boit
 C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\obj\Debug\net7.0\BoiteAIdees.pdb
 C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\obj\Debug\net7.0\BoiteAIdees.genruntimeconfig.cache
 C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\obj\Debug\net7.0\ref\BoiteAIdees.dll
+C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\bin\Debug\net7.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\bin\Debug\net7.0\BoiteAIdees.xml
+C:\Users\tommy\OneDrive\Bureau\CDA_BoiteAIdees\Back_BoiteAIdees\BoiteAIdees\BoiteAIdees\obj\Debug\net7.0\BoiteAIdees.xml
