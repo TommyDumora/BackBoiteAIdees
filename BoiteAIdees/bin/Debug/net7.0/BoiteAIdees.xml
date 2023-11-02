@@ -66,8 +66,17 @@
             Récupère une idée par son identifiant.
             </summary>
             <param name="id">Identifiant de l'idée est un chiffre entier.</param>
-            <response code="200">Retourne la liste de toutes les idées</response>
+            <response code="200">Retourne une idées en fonction de sont ID</response>
             <response code="404">Aucune idée trouvée.</response>
+            <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
+        </member>
+        <member name="M:BoiteAIdees.Controllers.BoiteAIdeesController.CreateIdea(BoiteAIdees.Models.DTOs.CreateIdeasDto)">
+            <summary>
+            Permet de créer une idée.
+            </summary>
+            <param name="model">Représente une idée.</param>
+            <response code="201">L'idée a été créée avec succès.</response>
+            <response code="400">Requête incorrecte.</response>
             <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
         </member>
         <member name="T:BoiteAIdees.Models.Domaine.Categories">
@@ -255,6 +264,32 @@
             Obtient le nom de l'utilisateur.
             </summary>
         </member>
+        <member name="T:BoiteAIdees.Models.DTOs.CreateIdeasDto">
+            <summary>
+            Créé une idée au format DTO (Data Transfer Object).
+            </summary>
+        </member>
+        <member name="P:BoiteAIdees.Models.DTOs.CreateIdeasDto.IdeaId">
+            <summary>
+            Obtient ou définit l'identifiant de l'idée.
+            </summary>
+        </member>
+        <member name="P:BoiteAIdees.Models.DTOs.CreateIdeasDto.Title">
+            <summary>
+            Obtient ou définit le titre de l'idée.
+            </summary>
+        </member>
+        <member name="P:BoiteAIdees.Models.DTOs.CreateIdeasDto.Description">
+            <summary>
+            Obtient ou définit la description de l'idée.
+            </summary>
+        </member>
+        <member name="P:BoiteAIdees.Models.DTOs.CreateIdeasDto.CategoryId">
+            <summary>
+            Obtient ou définit l'identifiant de la catégorie associée à l'idée.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:BoiteAIdees.Models.DTOs.CreateIdeasDto.UserId" -->
         <member name="T:BoiteAIdees.Services.BoiteAIdeesService.BoiteAIdeesService">
             <summary>
             Implémentation du service BoiteAIdees.

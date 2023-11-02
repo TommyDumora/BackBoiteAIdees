@@ -15,7 +15,7 @@ namespace BoiteAIdees.Models.Domaine
         /// <summary>
         /// Obtient ou définit le titre de l'idée.
         /// </summary>
-        public string? Title { get; private set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Obtient ou définit la description de l'idée.

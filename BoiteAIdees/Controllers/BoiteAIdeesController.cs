@@ -82,8 +82,9 @@ namespace BoiteAIdees.Controllers
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
         [HttpGet("{id:int}")]
         [SwaggerOperation(
-        Summary = "Retourne un idée ",
-        Description = "Prend un ID en entrée pour renvoyer une idée en fonction."
+        Summary = "Retourne un idée",
+        Description = "Prend un ID en entrée pour renvoyer une idée en fonction.",
+        OperationId = "GetIdeaById"
         )]
         [SwaggerResponse(200, "L'idée a bien été trouvée", typeof(IdeasDto))]
         [SwaggerResponse(404, "Aucune idée trouvée pour l'ID spécifié.")]
@@ -119,38 +120,49 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<IdeasDto>> CreateIdea([FromBody] IdeasDto ideaDto)
-        //{
-        //    try
-        //    {
-        //        var newIdea = new Ideas
-        //        {
-        //            Title = ideaDto.Title,
-        //            Description = ideaDto.Description,
-        //            // Assigner d'autres propriétés depuis le DTO
-        //        };
+        /// <summary>
+        /// Permet de créer une idée.
+        /// </summary>
+        /// <param name="model">Représente une idée.</param>
+        /// <response code="201">L'idée a été créée avec succès.</response>
+        /// <response code="400">Requête incorrecte.</response>
+        /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
+        [HttpPost]
+        [SwaggerOperation(
+        Summary = "Permet de créer une idée",
+        Description = "Permet de créer une idée et de l'ajouter en base de donnée.",
+        OperationId = "CreateIdea"
+        )]
+        [SwaggerResponse(201, "L'idée a été créée avec succès.", typeof(CreateIdeasDto))]
+        [SwaggerResponse(400, "Requête incorrecte.")]
+        [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
+        public async Task<ActionResult<IdeasDto>> CreateIdea([FromBody] CreateIdeasDto model)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    Ideas newIdea = new()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        CategoryId = model.CategoryId,
+                        UserId = model.UserId
+                    };
 
-        //        // Enregistrer la nouvelle idée en base de données
-        //        _service.AddIdea(newIdea); // Imaginons que vous ayez une méthode AddIdea dans votre service
+                    await _service.AddIdea(newIdea);
 
-        //        // Convertir la nouvelle idée en DTO pour retourner les détails ajoutés
-        //        var ideaDtoResult = new IdeasDto
-        //        {
-        //            IdeaId = newIdea.IdeaId,
-        //            Title = newIdea.Title,
-        //            Description = newIdea.Description,
-        //            // Assigner d'autres propriétés pour le DTO
-        //        };
+                    return CreatedAtAction(nameof(GetIdeaById), new { id = newIdea.IdeaId }, newIdea);
+                }
 
-        //        return CreatedAtAction(nameof(GetIdeaById), new { id = ideaDtoResult.IdeaId }, ideaDtoResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Erreur lors de la création d'une nouvelle idée.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
-        //    }
-        //}
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la création d'une nouvelle idée.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
+            }
+        }
 
     }
 }
