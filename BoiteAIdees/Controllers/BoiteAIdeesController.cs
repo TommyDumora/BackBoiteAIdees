@@ -3,6 +3,7 @@ using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services.BoiteAIdeesService;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Globalization;
 
 namespace BoiteAIdees.Controllers
 {
@@ -48,23 +49,20 @@ namespace BoiteAIdees.Controllers
             {
                 var ideas = await _service.GetAllIdeas();
 
-                if (ideas != null && ideas.Any())
+                if (ideas == null || !ideas.Any()) return NotFound("Aucune idée trouvée.");
+
+                IEnumerable<IdeasDto> ideasDto = ideas.Select(i => new IdeasDto
                 {
-                    IEnumerable<IdeasDto> ideasDto = ideas.Select(i => new IdeasDto
-                    {
-                        IdeaId = i.IdeaId,
-                        Title = i.Title,
-                        Description = i.Description,
-                        CategoryName = i.Category?.Name,
-                        CreatedAt = i.CreatedAt,
-                        UserFirstName = i.User?.FirstName,
-                        UserLastName = i.User?.LastName
-                    });
+                    IdeaId = i.IdeaId,
+                    Title = i.Title,
+                    Description = i.Description,
+                    CategoryName = i.Category?.Name,
+                    CreatedAt = i.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
+                    UserFirstName = i.User?.FirstName,
+                    UserLastName = i.User?.LastName
+                });
 
-                    return Ok(ideasDto);
-                }
-
-                return NotFound("Aucune idée trouvée.");
+                return Ok(ideasDto);
             }
             catch (Exception ex)
             {
@@ -95,23 +93,20 @@ namespace BoiteAIdees.Controllers
             {
                 var idea = await _service.GetIdeaById(id);
 
-                if (idea != null)
+                if (idea == null) return NotFound("Aucune idée trouvée pour l'ID spécifié.");
+
+                IdeasDto ideasDto = new()
                 {
-                    IdeasDto ideasDto = new()
-                    {
-                        IdeaId = id,
-                        Title = idea.Title,
-                        Description = idea.Description,
-                        CategoryName = idea.Category?.Name,
-                        CreatedAt = idea.CreatedAt,
-                        UserFirstName = idea.User?.FirstName,
-                        UserLastName = idea.User?.LastName
-                    };
+                    IdeaId = id,
+                    Title = idea.Title,
+                    Description = idea.Description,
+                    CategoryName = idea.Category?.Name,
+                    CreatedAt = idea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
+                    UserFirstName = idea.User?.FirstName,
+                    UserLastName = idea.User?.LastName
+                };
 
-                    return Ok(ideasDto);
-                }
-
-                return NotFound("Aucune idée trouvée pour l'ID spécifié.");
+                return Ok(ideasDto);
             }
             catch (Exception ex)
             {
@@ -138,24 +133,32 @@ namespace BoiteAIdees.Controllers
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
         public async Task<ActionResult<IdeasDto>> CreateIdea([FromBody] CreateIdeasDto model)
         {
+            if (!ModelState.IsValid) return BadRequest();
+
             try
             {
-                if(ModelState.IsValid)
+                Ideas newIdea = new()
                 {
-                    Ideas newIdea = new()
-                    {
-                        Title = model.Title,
-                        Description = model.Description,
-                        CategoryId = model.CategoryId,
-                        UserId = model.UserId
-                    };
+                    Title = model.Title,
+                    Description = model.Description,
+                    CategoryId = model.CategoryId,
+                    UserId = model.UserId,
+                };
 
-                    await _service.AddIdea(newIdea);
+                await _service.AddIdea(newIdea);
 
-                    return CreatedAtAction(nameof(GetIdeaById), new { id = newIdea.IdeaId }, newIdea);
-                }
+                IdeasDto ideasDto = new()
+                {
+                    IdeaId = newIdea.IdeaId,
+                    Title = newIdea.Title,
+                    Description = newIdea.Description,
+                    CategoryName = newIdea.Category?.Name,
+                    CreatedAt = newIdea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
+                    UserFirstName = newIdea.User?.FirstName,
+                    UserLastName = newIdea.User?.LastName
+                };
 
-                return BadRequest();
+                return CreatedAtAction(nameof(GetIdeaById), new { id = ideasDto.IdeaId }, ideasDto);
             }
             catch (Exception ex)
             {

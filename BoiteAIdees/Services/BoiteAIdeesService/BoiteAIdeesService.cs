@@ -39,6 +39,11 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// <returns>Une idée spécifique ou null si non trouvée.</returns>
         public async Task<Ideas> GetIdeaById(int id)
         {
+            if (id <= 0)
+            {
+                throw new ArgumentException("L'identifiant de l'idée doit être supérieur à zéro.");
+            }
+
             var idea = await _context.Ideas.FirstOrDefaultAsync(i => i.IdeaId == id);
 
             return idea ?? throw new InvalidOperationException("L'idée avec cet identifiant est introuvable.");
@@ -51,10 +56,24 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// <returns>Une idée est ajoutée.</returns>
         public async Task<Ideas> AddIdea(Ideas newIdea)
         {
+            if (newIdea == null)
+            {
+                throw new ArgumentNullException(nameof(newIdea));
+            }
+
             _context.Ideas.Add(newIdea);
+
+            await _context.Entry(newIdea)
+                .Reference(i => i.Category)
+                .LoadAsync();
+
+            await _context.Entry(newIdea)
+                .Reference(i => i.User)
+                .LoadAsync();
+
             await _context.SaveChangesAsync();
+
             return newIdea;
         }
-
     }
 }

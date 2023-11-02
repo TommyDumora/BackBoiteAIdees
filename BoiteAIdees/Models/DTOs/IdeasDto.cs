@@ -30,7 +30,7 @@ namespace BoiteAIdees.Models.DTOs
         /// <summary>
         /// Obtient la date de la création de l'idée.
         /// </summary>
-        public DateTime CreatedAt { get; set; }
+        public string? CreatedAt { get; set; }
 
         /// <summary>
         /// Obtient le prénom de l'utilisateur.
