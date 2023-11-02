@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace BoiteAIdees.Models.DTOs
 {
     /// <summary>
     /// Représente une idée au format DTO (Data Transfer Object).
     /// </summary>
+    [SwaggerSchema(Description = "Modèle représentant une idée pour l'API.")]
     public class IdeasDto
     {
         /// <summary>
@@ -46,6 +48,7 @@ namespace BoiteAIdees.Models.DTOs
     /// <summary>
     /// Créé une idée au format DTO (Data Transfer Object).
     /// </summary>
+    [SwaggerSchema(Description = "Modèle représentant une idée pour l'ajout d'une idée dans l'API.")]
     public class CreateIdeasDto
     {
         /// <summary>
@@ -68,7 +71,7 @@ namespace BoiteAIdees.Models.DTOs
 
         /// <summary>
         /// Obtient ou définit l'identifiant de l'utilisateur associé à l'idée.
-        /// </summary
+        /// </summary>
         [Required(ErrorMessage = "Id de l'utilisateur à associée à l'idée")]
         public int UserId { get; set; }
     }

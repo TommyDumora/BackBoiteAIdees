@@ -93,7 +93,7 @@ namespace BoiteAIdees.Controllers
             {
                 var idea = await _service.GetIdeaById(id);
 
-                if (idea == null) return NotFound("Aucune idée trouvée pour l'ID spécifié.");
+                if (idea == null) return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
 
                 IdeasDto ideasDto = new()
                 {
@@ -128,7 +128,7 @@ namespace BoiteAIdees.Controllers
         Description = "Permet de créer une idée et de l'ajouter en base de donnée.",
         OperationId = "CreateIdea"
         )]
-        [SwaggerResponse(201, "L'idée a été créée avec succès.", typeof(CreateIdeasDto))]
+        [SwaggerResponse(201, "L'idée a été créée avec succès.", typeof(IdeasDto))]
         [SwaggerResponse(400, "Requête incorrecte.")]
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
         public async Task<ActionResult<IdeasDto>> CreateIdea([FromBody] CreateIdeasDto model)
@@ -167,5 +167,42 @@ namespace BoiteAIdees.Controllers
             }
         }
 
+        /// <summary>
+        /// Permet de supprimer une idée.
+        /// </summary>
+        /// <param name="id">Représente l'identifiant d'une idée.</param>
+        /// <response code="204">L'idée a été supprimé avec succès.</response>
+        /// <response code="400">Requête incorrecte.</response>
+        /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
+        [HttpDelete("{id}")]
+        [SwaggerOperation(
+        Summary = "Permet de supprimer une idée",
+        Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
+        OperationId = "DeleteIdea"
+        )]
+        [SwaggerResponse(204, "L'idée a été supprimé avec succès.", typeof(ActionResult))]
+        [SwaggerResponse(400, "Requête incorrecte.")]
+        [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
+        public async Task<ActionResult<bool>> DeleteIdea(int id)
+        {
+            try
+            {
+                var existingIdea = await _service.GetIdeaById(id);
+
+                if (existingIdea == null)
+                {
+                    return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
+                }
+
+                await _service.DeleteIdea(existingIdea);
+
+                return NoContent(); // Réponse 204 (No Content) requête traitée avec succès mais pas d’information à renvoyer.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la suppression de l'idée.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur lors de la suppression de l'idée.");
+            }
+        }
     }
 }

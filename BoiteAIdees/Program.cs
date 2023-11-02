@@ -34,6 +34,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "La boîte à idées", Version = "v1" });
         var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        c.EnableAnnotations();
     });
     services.AddDbContext<BoiteAIdeesContext>(options => options.UseSqlServer(configuration.GetConnectionString("BoiteAIdees")));
     services.AddScoped<IBoiteAIdeesService, BoiteAIdeesService>();

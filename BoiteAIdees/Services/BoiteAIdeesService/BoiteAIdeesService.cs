@@ -39,12 +39,12 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// <returns>Une idée spécifique ou null si non trouvée.</returns>
         public async Task<Ideas> GetIdeaById(int id)
         {
-            if (id <= 0)
-            {
-                throw new ArgumentException("L'identifiant de l'idée doit être supérieur à zéro.");
-            }
+            if (id <= 0)  throw new ArgumentException("L'identifiant de l'idée doit être supérieur à zéro.");
 
-            var idea = await _context.Ideas.FirstOrDefaultAsync(i => i.IdeaId == id);
+            var idea = await _context.Ideas
+                .Include(i => i.Category)
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(i => i.IdeaId == id);
 
             return idea ?? throw new InvalidOperationException("L'idée avec cet identifiant est introuvable.");
         }
@@ -74,6 +74,22 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
             await _context.SaveChangesAsync();
 
             return newIdea;
+        }
+
+        /// <summary>
+        /// Permet de supprimer une idée.
+        /// </summary>
+        /// <param name="id">Identifiant de l'idée.</param>
+        /// <returns>Une idée est supprimé.</returns>
+        public async Task DeleteIdea(int id)
+        {
+            var idea = await GetIdeaById(id);
+
+            if (idea != null)
+            {
+                _context.Ideas.Remove(idea);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
