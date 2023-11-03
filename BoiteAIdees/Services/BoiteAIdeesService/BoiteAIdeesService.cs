@@ -56,10 +56,7 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// <returns>Une idée est ajoutée.</returns>
         public async Task<Ideas> AddIdea(Ideas newIdea)
         {
-            if (newIdea == null)
-            {
-                throw new ArgumentNullException(nameof(newIdea));
-            }
+            if (newIdea == null) throw new ArgumentNullException(nameof(newIdea), "L'idée à ajouter est nulle.");
 
             _context.Ideas.Add(newIdea);
 
@@ -90,6 +87,21 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
                 _context.Ideas.Remove(idea);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        /// <summary>
+        /// Permet de mettre à jour une idée.
+        /// </summary>
+        /// <param name="updateIdea">Représente une idée.</param>
+        /// <returns>Une idée est modifié.</returns>
+        public async Task<Ideas> UpdateIdea(Ideas updateIdea)
+        {
+            if (updateIdea == null) throw new ArgumentNullException(nameof(updateIdea), "L'idée à mettre à jour est nulle.");
+
+            updateIdea.UpdatedAt = DateTime.Now;
+            _context.Entry(updateIdea).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return updateIdea;
         }
     }
 }

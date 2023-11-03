@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BoiteAIdees.Models.Domaine
+﻿namespace BoiteAIdees.Models.Domaine
 {
     /// <summary>
     /// Représente une idée.

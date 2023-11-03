@@ -75,4 +75,21 @@ namespace BoiteAIdees.Models.DTOs
         [Required(ErrorMessage = "Id de l'utilisateur à associée à l'idée")]
         public int UserId { get; set; }
     }
+
+    /// <summary>
+    /// Modifie une idée au format DTO (Data Transfer Object).
+    /// </summary>
+    [SwaggerSchema(Description = "Modèle représentant la mise à jour d'une idée pour l'API.")]
+    public class UpdateIdea
+    {
+        /// <summary>
+        /// Obtient ou définit le titre de l'idée.
+        /// </summary>
+        public string? Title { get; set; }
+
+        /// <summary>
+        /// Obtient ou définit la description de l'idée.
+        /// </summary>
+        public string? Description { get; set; }
+    }
 }

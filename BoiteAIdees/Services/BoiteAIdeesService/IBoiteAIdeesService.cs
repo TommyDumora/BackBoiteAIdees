@@ -27,5 +27,10 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// Suppression d'une idée.
         /// </summary>
         Task DeleteIdea(int id);
+
+        /// <summary>
+        /// Mise à jour d'une idée.
+        /// </summary>
+        Task<Ideas> UpdateIdea(Ideas updateIdea);
     }
 }

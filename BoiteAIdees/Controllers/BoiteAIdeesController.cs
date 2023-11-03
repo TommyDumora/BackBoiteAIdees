@@ -61,9 +61,9 @@ namespace BoiteAIdees.Controllers
 
                 return Ok(ideasDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
 
@@ -74,6 +74,7 @@ namespace BoiteAIdees.Controllers
         /// <response code="200">Retourne une idées en fonction de sont ID</response>
         /// <response code="404">Aucune idée trouvée.</response>
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
+        /// <returns>Une idée spécifique ou null si non trouvée.</returns>
         [HttpGet("{id:int}")]
         [SwaggerOperation(
         Summary = "Retourne un idée",
@@ -104,9 +105,17 @@ namespace BoiteAIdees.Controllers
 
                 return Ok(ideasDto);
             }
-            catch (Exception)
+            catch (ArgumentException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound("Erreur lors de la récupération de l'idée : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
 
@@ -155,9 +164,13 @@ namespace BoiteAIdees.Controllers
 
                 return CreatedAtAction(nameof(GetIdeaById), new { id = ideasDto.IdeaId }, ideasDto);
             }
-            catch (Exception)
+            catch (ArgumentNullException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
 
@@ -174,7 +187,7 @@ namespace BoiteAIdees.Controllers
         Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
         OperationId = "DeleteIdea"
         )]
-        [SwaggerResponse(204, "L'idée a été supprimé avec succès.", typeof(ActionResult))]
+        [SwaggerResponse(204, "L'idée a été supprimé avec succès.")]
         [SwaggerResponse(400, "Requête incorrecte.")]
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
         public async Task<ActionResult> DeleteIdea(int id)
@@ -192,9 +205,58 @@ namespace BoiteAIdees.Controllers
 
                 return NoContent(); // Réponse 204 (No Content) requête traitée avec succès mais pas d’information à renvoyer.
             }
-            catch (Exception)
+            catch (ArgumentException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur lors de la suppression de l'idée.");
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Permet de mettre à jour une idée.
+        /// </summary>
+        /// <param name="id">Représente l'identifiant d'une idée.</param>
+        /// <param name="ideaDto">Représente une idée.</param>
+        /// <response code="204">L'idée a été modifié avec succès.</response>
+        /// <response code="400">Requête incorrecte.</response>
+        /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
+        [HttpPut("{id:int}")]
+        [SwaggerOperation(
+        Summary = "Permet de mettre à jour une idée",
+        Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
+        OperationId = "UpdateIdea"
+        )]
+        [SwaggerResponse(204, "L'idée a été modifié avec succès.")]
+        [SwaggerResponse(400, "Requête incorrecte.")]
+        [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
+        public async Task<ActionResult> UpdateIdea(int id, [FromBody] UpdateIdea ideaDto)
+        {
+            try
+            {
+                var existingIdea = await _service.GetIdeaById(id);
+
+                if (existingIdea == null)
+                {
+                    return NotFound("L'idée n'a pas été trouvée.");
+                }
+
+                existingIdea.Title = ideaDto.Title;
+                existingIdea.Description = ideaDto.Description;
+
+                await _service.UpdateIdea(existingIdea);
+
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
     }
