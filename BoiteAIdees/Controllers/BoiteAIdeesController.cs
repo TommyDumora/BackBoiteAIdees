@@ -15,17 +15,14 @@ namespace BoiteAIdees.Controllers
     public class BoiteAIdeesController : ControllerBase
     {
         private readonly IBoiteAIdeesService _service;
-        private readonly ILogger<BoiteAIdeesController> _logger;
 
         /// <summary>
         /// Constructeur du contrôleur BoiteAIdees.
         /// </summary>
         /// <param name="service">Service BoiteAIdees pour la gestion des idées.</param>
-        /// <param name="logger">Logger pour la journalisation des événements.</param>
-        public BoiteAIdeesController(IBoiteAIdeesService service, ILogger<BoiteAIdeesController> logger)
+        public BoiteAIdeesController(IBoiteAIdeesService service)
         {
             _service = service;
-            _logger = logger;
         }
 
         /// <summary>
@@ -64,9 +61,8 @@ namespace BoiteAIdees.Controllers
 
                 return Ok(ideasDto);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Une erreur s'est produite lors de la récupération des idées.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
             }
         }
@@ -108,9 +104,8 @@ namespace BoiteAIdees.Controllers
 
                 return Ok(ideasDto);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Une erreur s'est produite lors de la récupération de l'idée.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
             }
         }
@@ -160,9 +155,8 @@ namespace BoiteAIdees.Controllers
 
                 return CreatedAtAction(nameof(GetIdeaById), new { id = ideasDto.IdeaId }, ideasDto);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Erreur lors de la création d'une nouvelle idée.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur.");
             }
         }
@@ -174,7 +168,7 @@ namespace BoiteAIdees.Controllers
         /// <response code="204">L'idée a été supprimé avec succès.</response>
         /// <response code="400">Requête incorrecte.</response>
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [SwaggerOperation(
         Summary = "Permet de supprimer une idée",
         Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
@@ -183,7 +177,7 @@ namespace BoiteAIdees.Controllers
         [SwaggerResponse(204, "L'idée a été supprimé avec succès.", typeof(ActionResult))]
         [SwaggerResponse(400, "Requête incorrecte.")]
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
-        public async Task<ActionResult<bool>> DeleteIdea(int id)
+        public async Task<ActionResult> DeleteIdea(int id)
         {
             try
             {
@@ -194,13 +188,12 @@ namespace BoiteAIdees.Controllers
                     return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
                 }
 
-                await _service.DeleteIdea(existingIdea);
+                await _service.DeleteIdea(id);
 
                 return NoContent(); // Réponse 204 (No Content) requête traitée avec succès mais pas d’information à renvoyer.
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Erreur lors de la suppression de l'idée.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur lors de la suppression de l'idée.");
             }
         }
