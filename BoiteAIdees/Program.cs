@@ -1,5 +1,5 @@
 using BoiteAIdees.Context;
-using BoiteAIdees.Services.BoiteAIdeesService;
+using BoiteAIdees.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -37,7 +37,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
         c.EnableAnnotations();
     });
     services.AddDbContext<BoiteAIdeesContext>(options => options.UseSqlServer(configuration.GetConnectionString("BoiteAIdees")));
-    services.AddScoped<IBoiteAIdeesService, BoiteAIdeesService>();
+    services.AddScoped<IdeasService>();
+    services.AddScoped<CategoriesService>();
     services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>

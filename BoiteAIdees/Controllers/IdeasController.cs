@@ -1,6 +1,6 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
-using BoiteAIdees.Services.BoiteAIdeesService;
+using BoiteAIdees.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
@@ -12,15 +12,15 @@ namespace BoiteAIdees.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class BoiteAIdeesController : ControllerBase
+    public class IdeasController : ControllerBase
     {
-        private readonly IBoiteAIdeesService _service;
+        private readonly IdeasService _service;
 
         /// <summary>
         /// Constructeur du contrôleur BoiteAIdees.
         /// </summary>
         /// <param name="service">Service BoiteAIdees pour la gestion des idées.</param>
-        public BoiteAIdeesController(IBoiteAIdeesService service)
+        public IdeasController(IdeasService service)
         {
             _service = service;
         }
@@ -48,7 +48,7 @@ namespace BoiteAIdees.Controllers
 
                 if (ideas == null || !ideas.Any()) return NotFound("Aucune idée trouvée.");
 
-                IEnumerable<IdeasDto> ideasDto = ideas.Select(i => new IdeasDto
+                List<IdeasDto> ideasDtos = ideas.Select(i => new IdeasDto
                 {
                     IdeaId = i.IdeaId,
                     Title = i.Title,
@@ -57,9 +57,9 @@ namespace BoiteAIdees.Controllers
                     CreatedAt = i.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
                     UserFirstName = i.User?.FirstName,
                     UserLastName = i.User?.LastName
-                });
+                }).ToList();
 
-                return Ok(ideasDto);
+                return Ok(ideasDtos);
             }
             catch (Exception ex)
             {

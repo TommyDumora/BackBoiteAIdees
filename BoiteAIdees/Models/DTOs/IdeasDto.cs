@@ -48,7 +48,7 @@ namespace BoiteAIdees.Models.DTOs
     /// <summary>
     /// Créé une idée au format DTO (Data Transfer Object).
     /// </summary>
-    [SwaggerSchema(Description = "Modèle représentant une idée pour l'ajout d'une idée dans l'API.")]
+    [SwaggerSchema(Description = "Modèle représentant l'ajout d'une idée dans l'API.")]
     public class CreateIdeasDto
     {
         /// <summary>

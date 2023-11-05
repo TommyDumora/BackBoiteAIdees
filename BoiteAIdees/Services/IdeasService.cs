@@ -2,12 +2,12 @@
 using BoiteAIdees.Models.Domaine;
 using Microsoft.EntityFrameworkCore;
 
-namespace BoiteAIdees.Services.BoiteAIdeesService
+namespace BoiteAIdees.Services
 {
     /// <summary>
-    /// Implémentation du service BoiteAIdees.
+    /// Service de gestion des idées.
     /// </summary>
-    public class BoiteAIdeesService : IBoiteAIdeesService
+    public class IdeasService
     {
         private readonly BoiteAIdeesContext _context;
 
@@ -15,7 +15,7 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// Constructeur de la classe BoiteAIdeesService.
         /// </summary>
         /// <param name="context">Contexte de la base de données BoiteAIdees.</param>
-        public BoiteAIdeesService(BoiteAIdeesContext context)
+        public IdeasService(BoiteAIdeesContext context)
         {
             _context = context;
         }
@@ -39,7 +39,7 @@ namespace BoiteAIdees.Services.BoiteAIdeesService
         /// <returns>Une idée spécifique ou null si non trouvée.</returns>
         public async Task<Ideas> GetIdeaById(int id)
         {
-            if (id <= 0)  throw new ArgumentException("L'identifiant de l'idée doit être supérieur à zéro.");
+            if (id <= 0) throw new ArgumentException("L'identifiant de l'idée doit être supérieur à zéro.");
 
             var idea = await _context.Ideas
                 .Include(i => i.Category)
