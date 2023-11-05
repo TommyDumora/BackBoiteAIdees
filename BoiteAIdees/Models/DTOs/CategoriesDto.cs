@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace BoiteAIdees.Models.DTOs
 {
@@ -16,6 +17,15 @@ namespace BoiteAIdees.Models.DTOs
         /// <summary>
         /// Obtient ou définit le nom de la catégorie.
         /// </summary>
+        public string? Name { get; set; }
+    }
+
+    public class AddCategorieDto
+    {
+        /// <summary>
+        /// Obtient ou définit le nom de la catégorie.
+        /// </summary>
+        [Required(ErrorMessage = "Un nom est requis")]
         public string? Name { get; set; }
     }
 }
