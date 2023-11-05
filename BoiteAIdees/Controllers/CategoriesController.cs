@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Services;
 using BoiteAIdees.Models.DTOs;
+using System.Globalization;
 
 namespace BoiteAIdees.Controllers
 {
@@ -40,16 +41,41 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Categories>> GetCategories(int id)
-        //{
-          
-        //}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CategoriesDto>> GetCategorieById(int id)
+        {
+            try
+            {
+                var categorie = await _service.GetCategorieById(id);
+
+                if (categorie == null) return NotFound($"La catégorie avec l'id {id} n'a pas été trouvée.");
+
+                CategoriesDto categorieDto = new()
+                {
+                    CategoryId = id,
+                    Name = categorie.Name
+                };
+
+                return Ok(categorieDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound("Erreur lors de la récupération de la catégorie : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
 
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutCategories(int id, Categories categories)
         //{
-            
+
         //}
 
         //[HttpPost]

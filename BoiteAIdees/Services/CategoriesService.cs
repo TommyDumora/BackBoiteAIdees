@@ -28,5 +28,14 @@ namespace BoiteAIdees.Services
         {
             return await _context.Categories.ToListAsync();
         }
+
+        public async Task<Categories> GetCategorieById(int id)
+        {
+            if (id <= 0) throw new ArgumentException("L'identifiant de la catégorie doit être supérieur à zéro.");
+
+            var categorie = await _context.Categories.FindAsync(id);
+
+            return categorie ?? throw new InvalidOperationException("La catégorie avec cet identifiant est introuvable.");
+        }
     }
 }
