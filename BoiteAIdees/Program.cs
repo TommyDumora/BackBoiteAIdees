@@ -39,6 +39,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddDbContext<BoiteAIdeesContext>(options => options.UseSqlServer(configuration.GetConnectionString("BoiteAIdees")));
     services.AddScoped<IdeasService>();
     services.AddScoped<CategoriesService>();
+    services.AddScoped<UsersService>();
+
     services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>

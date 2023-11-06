@@ -20,7 +20,7 @@ namespace BoiteAIdees.Models.DTOs
         public string? Name { get; set; }
     }
 
-    public class AddCategorieDto
+    public class NameCategorieDto
     {
         /// <summary>
         /// Obtient ou définit le nom de la catégorie.

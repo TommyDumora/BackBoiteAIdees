@@ -73,7 +73,7 @@ namespace BoiteAIdees.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CategoriesDto>> CreateCategorie([FromBody] AddCategorieDto model)
+        public async Task<ActionResult<CategoriesDto>> CreateCategorie([FromBody] NameCategorieDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -129,7 +129,7 @@ namespace BoiteAIdees.Controllers
 
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateCategories(int id,[FromBody] AddCategorieDto categorieDto)
+        public async Task<ActionResult> UpdateCategories(int id,[FromBody] NameCategorieDto categorieDto)
         {
             try
             {
@@ -153,9 +153,5 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        //private bool CategoriesExists(int id)
-        //{
-        //    return (_context.Categories?.Any(e => e.CategoryId == id)).GetValueOrDefault();
-        //}
     }
 }
