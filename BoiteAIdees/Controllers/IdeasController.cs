@@ -1,7 +1,6 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
@@ -11,7 +10,6 @@ namespace BoiteAIdees.Controllers
     /// <summary>
     /// Contrôleur pour la gestion des idées.
     /// </summary>
-    [EnableCors("VueCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class IdeasController : ControllerBase

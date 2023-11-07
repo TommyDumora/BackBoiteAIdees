@@ -19,6 +19,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors("VueJsPolicy");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
@@ -43,9 +44,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddCors(options =>
     {
-        options.AddDefaultPolicy(policy =>
+        options.AddPolicy("VueJsPolicy", policy =>
         {
-            policy./*AllowAnyOrigin()*/
+            policy.
                 WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod()

@@ -2,11 +2,9 @@
 using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Services;
 using BoiteAIdees.Models.DTOs;
-using Microsoft.AspNetCore.Cors;
 
 namespace BoiteAIdees.Controllers
 {
-    [EnableCors("VueCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
