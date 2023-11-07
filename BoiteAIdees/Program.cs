@@ -45,7 +45,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.AllowAnyOrigin()
+            policy./*AllowAnyOrigin()*/
+                WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

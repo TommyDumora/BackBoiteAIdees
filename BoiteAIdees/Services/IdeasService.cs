@@ -58,19 +58,27 @@ namespace BoiteAIdees.Services
         {
             if (newIdea == null) throw new ArgumentNullException(nameof(newIdea), "L'idée à ajouter est nulle.");
 
-            _context.Ideas.Add(newIdea);
+            try
+            {
+                _context.Ideas.Add(newIdea);
 
-            await _context.Entry(newIdea)
-                .Reference(i => i.Category)
-                .LoadAsync();
+                await _context.Entry(newIdea)
+                    .Reference(i => i.Category)
+                    .LoadAsync();
 
-            await _context.Entry(newIdea)
-                .Reference(i => i.User)
-                .LoadAsync();
+                await _context.Entry(newIdea)
+                    .Reference(i => i.User)
+                    .LoadAsync();
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return newIdea;
+                return newIdea;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
+            
         }
 
         /// <summary>

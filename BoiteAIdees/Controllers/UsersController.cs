@@ -1,10 +1,12 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoiteAIdees.Controllers
 {
+    [EnableCors("VueCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

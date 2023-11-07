@@ -80,7 +80,7 @@ namespace BoiteAIdees.Models.DTOs
     /// Modifie une idée au format DTO (Data Transfer Object).
     /// </summary>
     [SwaggerSchema(Description = "Modèle représentant la mise à jour d'une idée pour l'API.")]
-    public class UpdateIdea
+    public class UpdateIdeaDto
     {
         /// <summary>
         /// Obtient ou définit le titre de l'idée.

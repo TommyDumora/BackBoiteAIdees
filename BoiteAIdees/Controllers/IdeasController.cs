@@ -1,6 +1,7 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
@@ -10,6 +11,7 @@ namespace BoiteAIdees.Controllers
     /// <summary>
     /// Contrôleur pour la gestion des idées.
     /// </summary>
+    [EnableCors("VueCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class IdeasController : ControllerBase
@@ -232,7 +234,7 @@ namespace BoiteAIdees.Controllers
         [SwaggerResponse(204, "L'idée a été modifié avec succès.")]
         [SwaggerResponse(400, "Requête incorrecte.")]
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
-        public async Task<ActionResult> UpdateIdea(int id, [FromBody] UpdateIdea ideaDto)
+        public async Task<ActionResult> UpdateIdea(int id, [FromBody] UpdateIdeaDto ideaDto)
         {
             try
             {
