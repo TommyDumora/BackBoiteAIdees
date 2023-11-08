@@ -54,7 +54,7 @@ namespace BoiteAIdees.Controllers
                     Title = i.Title,
                     Description = i.Description,
                     CategoryName = i.Category?.Name,
-                    CreatedAt = i.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
+                    CreatedAt = i.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
                     UserFirstName = i.User?.FirstName,
                     UserLastName = i.User?.LastName
                 }).ToList();
