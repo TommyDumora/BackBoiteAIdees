@@ -245,6 +245,7 @@ namespace BoiteAIdees.Controllers
 
                 existingIdea.Title = ideaDto.Title;
                 existingIdea.Description = ideaDto.Description;
+                existingIdea.CategoryId = ideaDto.CategoryId;
 
                 await _service.UpdateIdea(existingIdea);
 
