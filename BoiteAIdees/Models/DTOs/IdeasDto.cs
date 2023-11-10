@@ -25,6 +25,11 @@ namespace BoiteAIdees.Models.DTOs
         public string? Description { get; set; }
 
         /// <summary>
+        /// Obtient ou définit l'identifiant de la catégorie associée à l'idée.
+        /// </summary>
+        public int CategoryId { get; set; }
+
+        /// <summary>
         /// Obtient ou définit le nom de la catégorie associée à l'idée.
         /// </summary>
         public string? CategoryName { get; set; }
