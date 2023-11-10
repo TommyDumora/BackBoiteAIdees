@@ -25,6 +25,11 @@ namespace BoiteAIdees.Models.DTOs
         public string? Description { get; set; }
 
         /// <summary>
+        /// Obtient ou définit l'identifiant de la catégorie associée à l'idée.
+        /// </summary>
+        public int CategoryId { get; set; }
+
+        /// <summary>
         /// Obtient ou définit le nom de la catégorie associée à l'idée.
         /// </summary>
         public string? CategoryName { get; set; }
@@ -80,7 +85,7 @@ namespace BoiteAIdees.Models.DTOs
     /// Modifie une idée au format DTO (Data Transfer Object).
     /// </summary>
     [SwaggerSchema(Description = "Modèle représentant la mise à jour d'une idée pour l'API.")]
-    public class UpdateIdea
+    public class UpdateIdeaDto
     {
         /// <summary>
         /// Obtient ou définit le titre de l'idée.
@@ -91,5 +96,10 @@ namespace BoiteAIdees.Models.DTOs
         /// Obtient ou définit la description de l'idée.
         /// </summary>
         public string? Description { get; set; }
+
+        /// <summary>
+        /// Obtient ou définit l'identifiant de la catégorie associée à l'idée.
+        /// </summary>
+        public int CategoryId { get; set; }
     }
 }

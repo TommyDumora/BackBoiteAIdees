@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Services;
 using BoiteAIdees.Models.DTOs;
@@ -40,31 +39,117 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Categories>> GetCategories(int id)
-        //{
-          
-        //}
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CategoriesDto>> GetCategorieById([FromRoute] int id)
+        {
+            try
+            {
+                var categorie = await _service.GetCategorieById(id);
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCategories(int id, Categories categories)
-        //{
-            
-        //}
+                if (categorie == null) return NotFound($"La catégorie avec l'id {id} n'a pas été trouvée.");
 
-        //[HttpPost]
-        //public async Task<ActionResult<Categories>> PostCategories(Categories categories)
-        //{
-        //}
+                CategoriesDto categorieDto = new()
+                {
+                    CategoryId = id,
+                    Name = categorie.Name
+                };
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCategories(int id)
-        //{
-        //}
+                return Ok(categorieDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound("Erreur lors de la récupération de la catégorie : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
 
-        //private bool CategoriesExists(int id)
-        //{
-        //    return (_context.Categories?.Any(e => e.CategoryId == id)).GetValueOrDefault();
-        //}
+        [HttpPost]
+        public async Task<ActionResult<CategoriesDto>> CreateCategorie([FromBody] NameCategorieDto model)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            try
+            {
+                Categories newCategorie = new()
+                {
+                    Name = model.Name,
+                };
+
+                await _service.AddCategorie(newCategorie);
+
+                CategoriesDto categoriesDto = new()
+                {
+                    CategoryId = newCategorie.CategoryId,
+                    Name = newCategorie.Name
+                };
+
+                return CreatedAtAction(nameof(GetCategorieById), new { id = categoriesDto.CategoryId}, categoriesDto);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteCategories([FromRoute] int id)
+        {
+            try
+            {
+                var existingCategorie = await _service.GetCategorieById(id);
+
+                if (existingCategorie == null) return NotFound($"La catégorie avec l'id {id} n'a pas été trouvée.");
+
+                await _service.DeleteCategorie(id);
+
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
+
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> UpdateCategories(int id,[FromBody] NameCategorieDto categorieDto)
+        {
+            try
+            {
+                var existingCategorie = await _service.GetCategorieById(id);
+
+                if (existingCategorie == null) return NotFound("La catégorie n'a pas été trouvée.");
+
+                existingCategorie.Name = categorieDto.Name;
+
+                await _service.UptadeCategorie(existingCategorie);
+
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
+
     }
 }

@@ -53,8 +53,9 @@ namespace BoiteAIdees.Controllers
                     IdeaId = i.IdeaId,
                     Title = i.Title,
                     Description = i.Description,
+                    CategoryId = i.CategoryId,
                     CategoryName = i.Category?.Name,
-                    CreatedAt = i.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
+                    CreatedAt = i.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
                     UserFirstName = i.User?.FirstName,
                     UserLastName = i.User?.LastName
                 }).ToList();
@@ -97,6 +98,7 @@ namespace BoiteAIdees.Controllers
                     IdeaId = id,
                     Title = idea.Title,
                     Description = idea.Description,
+                    CategoryId = idea.CategoryId,
                     CategoryName = idea.Category?.Name,
                     CreatedAt = idea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
                     UserFirstName = idea.User?.FirstName,
@@ -156,6 +158,7 @@ namespace BoiteAIdees.Controllers
                     IdeaId = newIdea.IdeaId,
                     Title = newIdea.Title,
                     Description = newIdea.Description,
+                    CategoryId = newIdea.CategoryId,
                     CategoryName = newIdea.Category?.Name,
                     CreatedAt = newIdea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
                     UserFirstName = newIdea.User?.FirstName,
@@ -232,7 +235,7 @@ namespace BoiteAIdees.Controllers
         [SwaggerResponse(204, "L'idée a été modifié avec succès.")]
         [SwaggerResponse(400, "Requête incorrecte.")]
         [SwaggerResponse(500, "Une erreur s'est produite lors du traitement de la requête.")]
-        public async Task<ActionResult> UpdateIdea(int id, [FromBody] UpdateIdea ideaDto)
+        public async Task<ActionResult> UpdateIdea(int id, [FromBody] UpdateIdeaDto ideaDto)
         {
             try
             {
@@ -245,6 +248,7 @@ namespace BoiteAIdees.Controllers
 
                 existingIdea.Title = ideaDto.Title;
                 existingIdea.Description = ideaDto.Description;
+                existingIdea.CategoryId = ideaDto.CategoryId;
 
                 await _service.UpdateIdea(existingIdea);
 
