@@ -31,7 +31,8 @@ namespace BoiteAIdees.Controllers
                     UserId = u.UserId,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
-                    Email = u.Email
+                    Email = u.Email,
+                    Password = u.PasswordHash
                 }).ToList();
 
                 return Ok(usersDtos);
@@ -56,7 +57,8 @@ namespace BoiteAIdees.Controllers
                     UserId = user.UserId,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Email = user.Email
+                    Email = user.Email,
+                    Password = user.PasswordHash
                 };
 
                 return Ok(userDto);
@@ -80,6 +82,9 @@ namespace BoiteAIdees.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
+            if (!_service.IsPasswordStrong(model.PasswordHash))
+                return BadRequest("Le mot de passe doit contenir au moins 6 caractères, dont une majuscule, une minuscule et un chiffre.");
+
             try
             {
                 Users newUser = new()
@@ -87,7 +92,7 @@ namespace BoiteAIdees.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash),
+                    PasswordHash = model.PasswordHash,
                 };
 
                 await _service.AddUser(newUser);
@@ -98,6 +103,7 @@ namespace BoiteAIdees.Controllers
                     FirstName = newUser.FirstName,
                     LastName = newUser.LastName,
                     Email = newUser.Email,
+                    Password = newUser.PasswordHash
                 };
 
                 return CreatedAtAction(nameof(GetUserById), new { id = userDto.UserId }, userDto);
@@ -128,6 +134,34 @@ namespace BoiteAIdees.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest("Erreur dans l'argument : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<UsersDto>> Login(UsersLogin request)
+        {
+            try
+            {
+                var existingUser = await _service.GetUserByEmail(request.Email, request.Password);
+
+                if (existingUser == null) return BadRequest($"L'utilisateur avec l'email {request.Email} n'a pas été trouvé.");
+
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, existingUser.PasswordHash)) return BadRequest("Mauvais mot de passe");
+
+                UsersDto userDto = new()
+                {
+                    UserId = existingUser.UserId,
+                    FirstName = existingUser.FirstName,
+                    LastName = existingUser.LastName,
+                    Email = existingUser.Email,
+                    Password = existingUser.PasswordHash,
+                };
+
+                return Ok(userDto);
             }
             catch (Exception ex)
             {

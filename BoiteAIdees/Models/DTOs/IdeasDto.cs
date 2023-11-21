@@ -60,13 +60,13 @@ namespace BoiteAIdees.Models.DTOs
         /// Obtient ou définit le titre de l'idée.
         /// </summary>
         [Required(ErrorMessage = "Un titre est requis")]
-        public string? Title { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Obtient ou définit la description de l'idée.
         /// </summary>
         [Required(ErrorMessage = "Une description est requise")]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Obtient ou définit l'identifiant de la catégorie associée à l'idée.
@@ -90,16 +90,19 @@ namespace BoiteAIdees.Models.DTOs
         /// <summary>
         /// Obtient ou définit le titre de l'idée.
         /// </summary>
-        public string? Title { get; set; }
+        [Required(ErrorMessage = "Un titre est requis")]
+        public string Title { get; set; }
 
         /// <summary>
         /// Obtient ou définit la description de l'idée.
         /// </summary>
-        public string? Description { get; set; }
+        [Required(ErrorMessage = "Une description est requise")]
+        public string Description { get; set; }
 
         /// <summary>
         /// Obtient ou définit l'identifiant de la catégorie associée à l'idée.
         /// </summary>
+        [Required(ErrorMessage = "Id de la categorie à associée à l'idée")]
         public int CategoryId { get; set; }
     }
 }
