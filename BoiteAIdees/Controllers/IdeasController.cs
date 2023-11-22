@@ -4,6 +4,7 @@ using BoiteAIdees.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace BoiteAIdees.Controllers
 {
@@ -15,14 +16,16 @@ namespace BoiteAIdees.Controllers
     public class IdeasController : ControllerBase
     {
         private readonly IdeasService _service;
+        private readonly UserLikedIdeasService _likeService;
 
         /// <summary>
         /// Constructeur du contrôleur BoiteAIdees.
         /// </summary>
         /// <param name="service">Service BoiteAIdees pour la gestion des idées.</param>
-        public IdeasController(IdeasService service)
+        public IdeasController(IdeasService service, UserLikedIdeasService likeService)
         {
             _service = service;
+            _likeService = likeService;
         }
 
         /// <summary>
@@ -48,17 +51,7 @@ namespace BoiteAIdees.Controllers
 
                 if (ideas == null || !ideas.Any()) return NotFound("Aucune idée trouvée.");
 
-                List<IdeasDto> ideasDtos = ideas.Select(i => new IdeasDto
-                {
-                    IdeaId = i.IdeaId,
-                    Title = i.Title,
-                    Description = i.Description,
-                    CategoryId = i.CategoryId,
-                    CategoryName = i.Category?.Name,
-                    CreatedAt = i.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
-                    UserFirstName = i.User?.FirstName,
-                    UserLastName = i.User?.LastName
-                }).ToList();
+                List<IdeasDto> ideasDtos = ideas.Select(i => _service.MapToIdeasDto(i)).ToList();
 
                 return Ok(ideasDtos);
             }
@@ -93,17 +86,7 @@ namespace BoiteAIdees.Controllers
 
                 if (idea == null) return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
 
-                IdeasDto ideasDto = new()
-                {
-                    IdeaId = id,
-                    Title = idea.Title,
-                    Description = idea.Description,
-                    CategoryId = idea.CategoryId,
-                    CategoryName = idea.Category?.Name,
-                    CreatedAt = idea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
-                    UserFirstName = idea.User?.FirstName,
-                    UserLastName = idea.User?.LastName
-                };
+                IdeasDto ideasDto = _service.MapToIdeasDto(idea);
 
                 return Ok(ideasDto);
             }
@@ -263,5 +246,36 @@ namespace BoiteAIdees.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
+
+        [HttpPost("{id:int}/like")]
+        public async Task<ActionResult> LikeIdea(int id)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var like = await _likeService.LikeIdea(userId, id);
+
+            if (like == null)
+            {
+                return BadRequest("L'utilisateur a déjà liké cette idée.");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost("{id:int}/dislike")]
+        public async Task<ActionResult> DislikeIdea(int id)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var dislike = await _likeService.DislikeIdea(userId, id);
+
+            if (dislike == null)
+            {
+                return BadRequest("L'utilisateur a déjà disliké cette idée.");
+            }
+
+            return NoContent();
+        }
+
     }
 }

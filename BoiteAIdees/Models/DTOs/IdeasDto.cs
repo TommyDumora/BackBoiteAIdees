@@ -48,6 +48,10 @@ namespace BoiteAIdees.Models.DTOs
         /// Obtient le nom de l'utilisateur.
         /// </summary>
         public string? UserLastName { get; set; }
+
+        public int LikeCount { get; set; }
+
+        public int DislikeCount { get; set; }
     }
 
     /// <summary>
