@@ -41,6 +41,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IdeasService>();
     services.AddScoped<CategoriesService>();
     services.AddScoped<UsersService>();
+    services.AddScoped<UserLikedIdeasService>();
 
     services.AddCors(options =>
     {

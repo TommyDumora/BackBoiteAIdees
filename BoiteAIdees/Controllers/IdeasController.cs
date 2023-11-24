@@ -250,7 +250,8 @@ namespace BoiteAIdees.Controllers
         [HttpPost("{id:int}/like")]
         public async Task<ActionResult> LikeIdea(int id)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = 1;
 
             var like = await _likeService.LikeIdea(userId, id);
 
@@ -265,7 +266,8 @@ namespace BoiteAIdees.Controllers
         [HttpPost("{id:int}/dislike")]
         public async Task<ActionResult> DislikeIdea(int id)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = 1;
 
             var dislike = await _likeService.DislikeIdea(userId, id);
 
