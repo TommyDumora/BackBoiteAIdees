@@ -4,7 +4,6 @@ using BoiteAIdees.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
-using System.Security.Claims;
 
 namespace BoiteAIdees.Controllers
 {
@@ -16,16 +15,14 @@ namespace BoiteAIdees.Controllers
     public class IdeasController : ControllerBase
     {
         private readonly IdeasService _service;
-        private readonly UserLikedIdeasService _likeService;
 
         /// <summary>
         /// Constructeur du contrôleur BoiteAIdees.
         /// </summary>
         /// <param name="service">Service BoiteAIdees pour la gestion des idées.</param>
-        public IdeasController(IdeasService service, UserLikedIdeasService likeService)
+        public IdeasController(IdeasService service)
         {
             _service = service;
-            _likeService = likeService;
         }
 
         /// <summary>
@@ -247,37 +244,6 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpPost("{id:int}/like")]
-        public async Task<ActionResult> LikeIdea(int id)
-        {
-            //var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userId = 1;
-
-            var like = await _likeService.LikeIdea(userId, id);
-
-            if (like == null)
-            {
-                return BadRequest("L'utilisateur a déjà liké cette idée.");
-            }
-
-            return NoContent();
-        }
-
-        [HttpPost("{id:int}/dislike")]
-        public async Task<ActionResult> DislikeIdea(int id)
-        {
-            //var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userId = 1;
-
-            var dislike = await _likeService.DislikeIdea(userId, id);
-
-            if (dislike == null)
-            {
-                return BadRequest("L'utilisateur a déjà disliké cette idée.");
-            }
-
-            return NoContent();
-        }
 
     }
 }

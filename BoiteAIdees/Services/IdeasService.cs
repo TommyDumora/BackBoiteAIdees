@@ -119,13 +119,10 @@ namespace BoiteAIdees.Services
             return _context.UserLikedIdeas.Count(u => u.IdeaId == ideaId);
         }
 
-        public int GetDislikeCount(int ideaId)
-        {
-            return _context.UserLikedIdeas.Count(u => u.IdeaId == ideaId);
-        }
-
         public IdeasDto MapToIdeasDto(Ideas idea)
         {
+            var likeCount = GetLikeCount(idea.IdeaId);
+
             return new IdeasDto
             {
                 IdeaId = idea.IdeaId,
@@ -136,9 +133,9 @@ namespace BoiteAIdees.Services
                 CreatedAt = idea.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
                 UserFirstName = idea.User?.FirstName,
                 UserLastName = idea.User?.LastName,
-                LikeCount = GetLikeCount(idea.IdeaId),
-                DislikeCount = GetDislikeCount(idea.IdeaId)
+                LikeCount = likeCount,
             };
         }
+
     }
 }

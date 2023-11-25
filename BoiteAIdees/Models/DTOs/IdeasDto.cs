@@ -51,7 +51,6 @@ namespace BoiteAIdees.Models.DTOs
 
         public int LikeCount { get; set; }
 
-        public int DislikeCount { get; set; }
     }
 
     /// <summary>
