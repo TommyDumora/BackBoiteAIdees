@@ -48,17 +48,7 @@ namespace BoiteAIdees.Controllers
 
                 if (ideas == null || !ideas.Any()) return NotFound("Aucune idée trouvée.");
 
-                List<IdeasDto> ideasDtos = ideas.Select(i => new IdeasDto
-                {
-                    IdeaId = i.IdeaId,
-                    Title = i.Title,
-                    Description = i.Description,
-                    CategoryId = i.CategoryId,
-                    CategoryName = i.Category?.Name,
-                    CreatedAt = i.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
-                    UserFirstName = i.User?.FirstName,
-                    UserLastName = i.User?.LastName
-                }).ToList();
+                List<IdeasDto> ideasDtos = ideas.Select(i => _service.MapToIdeasDto(i)).ToList();
 
                 return Ok(ideasDtos);
             }
@@ -93,17 +83,7 @@ namespace BoiteAIdees.Controllers
 
                 if (idea == null) return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
 
-                IdeasDto ideasDto = new()
-                {
-                    IdeaId = id,
-                    Title = idea.Title,
-                    Description = idea.Description,
-                    CategoryId = idea.CategoryId,
-                    CategoryName = idea.Category?.Name,
-                    CreatedAt = idea.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", new CultureInfo("fr-FR")),
-                    UserFirstName = idea.User?.FirstName,
-                    UserLastName = idea.User?.LastName
-                };
+                IdeasDto ideasDto = _service.MapToIdeasDto(idea);
 
                 return Ok(ideasDto);
             }
@@ -263,5 +243,7 @@ namespace BoiteAIdees.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
             }
         }
+
+
     }
 }

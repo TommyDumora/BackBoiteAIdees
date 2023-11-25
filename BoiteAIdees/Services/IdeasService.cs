@@ -1,6 +1,8 @@
 ﻿using BoiteAIdees.Context;
 using BoiteAIdees.Models.Domaine;
+using BoiteAIdees.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BoiteAIdees.Services
 {
@@ -111,5 +113,29 @@ namespace BoiteAIdees.Services
             await _context.SaveChangesAsync();
             return updateIdea;
         }
+
+        public int GetLikeCount(int ideaId)
+        {
+            return _context.UserLikedIdeas.Count(u => u.IdeaId == ideaId);
+        }
+
+        public IdeasDto MapToIdeasDto(Ideas idea)
+        {
+            var likeCount = GetLikeCount(idea.IdeaId);
+
+            return new IdeasDto
+            {
+                IdeaId = idea.IdeaId,
+                Title = idea.Title,
+                Description = idea.Description,
+                CategoryId = idea.CategoryId,
+                CategoryName = idea.Category?.Name,
+                CreatedAt = idea.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
+                UserFirstName = idea.User?.FirstName,
+                UserLastName = idea.User?.LastName,
+                LikeCount = likeCount,
+            };
+        }
+
     }
 }
