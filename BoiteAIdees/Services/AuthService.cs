@@ -54,10 +54,17 @@ namespace BoiteAIdees.Services
         {
             List<Claim> claims = new()
             {
-                new Claim(ClaimTypes.Name, user.LastName!),
-                //new Claim(ClaimTypes.Role, "Admin"),
-                new Claim(ClaimTypes.Role, "User")
+                new Claim(ClaimTypes.Name, user.LastName!)
             };
+
+            if (user.IsAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
+            else
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
 
