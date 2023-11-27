@@ -40,6 +40,11 @@ namespace BoiteAIdees.Models.DTOs
         public string? CreatedAt { get; set; }
 
         /// <summary>
+        /// Obtient ou définit l'identifiant de l'utilisateur associé à l'idée.
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
         /// Obtient le prénom de l'utilisateur.
         /// </summary>
         public string? UserFirstName { get; set; }
@@ -49,6 +54,9 @@ namespace BoiteAIdees.Models.DTOs
         /// </summary>
         public string? UserLastName { get; set; }
 
+        /// <summary>
+        /// Obtient le nombre de like de l'idée.
+        /// </summary>
         public int LikeCount { get; set; }
 
     }

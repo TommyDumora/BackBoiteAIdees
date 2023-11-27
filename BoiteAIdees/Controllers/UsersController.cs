@@ -121,7 +121,7 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpDelete("{id:int}"), Authorize(Roles = "Admin,User")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteUser([FromRoute] int id)
         {
             try

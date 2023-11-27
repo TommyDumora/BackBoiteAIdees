@@ -1,6 +1,5 @@
 ﻿using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoiteAIdees.Controllers

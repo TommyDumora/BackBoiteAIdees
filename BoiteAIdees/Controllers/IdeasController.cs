@@ -209,7 +209,7 @@ namespace BoiteAIdees.Controllers
         [HttpPut("{id:int}")]
         [SwaggerOperation(
         Summary = "Permet de mettre à jour une idée",
-        Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
+        Description = "Permet de mettre à jour une idée .",
         OperationId = "UpdateIdea"
         )]
         [SwaggerResponse(204, "L'idée a été modifié avec succès.")]

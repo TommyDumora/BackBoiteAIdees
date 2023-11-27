@@ -131,6 +131,7 @@ namespace BoiteAIdees.Services
                 CategoryId = idea.CategoryId,
                 CategoryName = idea.Category?.Name,
                 CreatedAt = idea.CreatedAt.ToString("dd/MM/yyyy", new CultureInfo("fr-FR")),
+                UserId = idea.UserId,
                 UserFirstName = idea.User?.FirstName,
                 UserLastName = idea.User?.LastName,
                 LikeCount = likeCount,
