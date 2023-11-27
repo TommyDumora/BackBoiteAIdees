@@ -1,8 +1,11 @@
 using BoiteAIdees.Context;
 using BoiteAIdees.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,18 +33,38 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 {
     services.AddControllers();
     services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen(c =>
+    services.AddSwaggerGen(options =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "La boîte à idées", Version = "v1" });
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
+        options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "La boîte à idées", Version = "v1" });
         var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        c.EnableAnnotations();
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        options.EnableAnnotations();
+    });
+    services.AddAuthentication().AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token").Value!))
+        };
     });
     services.AddDbContext<BoiteAIdeesContext>(options => options.UseSqlServer(configuration.GetConnectionString("BoiteAIdees")));
     services.AddScoped<IdeasService>();
     services.AddScoped<CategoriesService>();
     services.AddScoped<UsersService>();
     services.AddScoped<UserLikedIdeasService>();
+    services.AddScoped<AuthService>();
+
 
     services.AddCors(options =>
     {

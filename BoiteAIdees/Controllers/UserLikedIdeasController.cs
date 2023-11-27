@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BoiteAIdees.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BoiteAIdees.Controllers
 {
@@ -14,11 +16,34 @@ namespace BoiteAIdees.Controllers
             _likeService = likeService;
         }
 
-        [HttpPost("{id:int}/like")]
+        [HttpPost("{id:int}/like"), Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> LikeIdea(int id)
         {
-            //var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userId = 1;
+
+            // Récupérez le JWT depuis la requête (vous pouvez utiliser [Authorize] pour obtenir automatiquement l'identité de l'utilisateur)
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Décodage du JWT pour obtenir les revendications (y compris userId)
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            // Vérifier que le décodage du JWT n'est pas null
+            if (jsonToken == null)
+            {
+                return Unauthorized("Token JWT invalide.");
+            }
+
+            // Obtenez l'ID de l'utilisateur à partir du JWT
+            var userIdClaim = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "userId");
+
+            // Vérifier que la revendication userId est présente
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Revendication 'userId' manquante dans le token JWT.");
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+
 
             var like = await _likeService.LikeIdea(userId, id);
 

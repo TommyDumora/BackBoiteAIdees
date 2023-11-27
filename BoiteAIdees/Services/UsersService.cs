@@ -7,10 +7,14 @@ namespace BoiteAIdees.Services
     public class UsersService
     {
         private readonly BoiteAIdeesContext _context;
+        private readonly AuthService _authService;
 
-        public UsersService(BoiteAIdeesContext context)
+
+        public UsersService(BoiteAIdeesContext context, AuthService authService)
         {
             _context = context;
+            _authService = authService;
+
         }
 
         public async Task<List<Users>> GetAllUsers()
@@ -31,7 +35,7 @@ namespace BoiteAIdees.Services
         {
             if (model == null) throw new ArgumentNullException(nameof(model), "L'utilisateur à ajouter est nulle.");
 
-            if (!IsPasswordStrong(model.PasswordHash)) throw new ArgumentException("Le mot de passe ne répond pas aux critères de sécurité.");
+            if (!_authService.IsPasswordStrong(model.PasswordHash)) throw new ArgumentException("Le mot de passe ne répond pas aux critères de sécurité.");
 
             model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
 
@@ -52,35 +56,5 @@ namespace BoiteAIdees.Services
             }
         }
 
-        public bool IsPasswordStrong(string password)
-        {
-            if (string.IsNullOrEmpty(password) || password.Length < 6)
-            {
-                return false;
-            }
-
-            bool containsUppercase = password.Any(char.IsUpper);
-            bool containsLowercase = password.Any(char.IsLower);
-            bool containsDigit = password.Any(char.IsDigit);
-
-            return containsUppercase && containsLowercase && containsDigit;
-        }
-
-        public async Task<Users?> GetUserByEmail(string email, string password)
-        {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) throw new ArgumentException("L'adresse e-mail et le mot de passe sont requis.");
-
-            var users = await _context.Users.Where(u => u.Email == email).ToListAsync();
-
-            foreach (var user in users)
-            {
-                if (BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-                {
-                    return user;
-                }
-            }
-
-            return null;
-        }
     }
 }

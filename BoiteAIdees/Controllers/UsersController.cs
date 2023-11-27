@@ -1,6 +1,7 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoiteAIdees.Controllers
@@ -11,13 +12,15 @@ namespace BoiteAIdees.Controllers
     {
 
         private readonly UsersService _service;
+        private readonly AuthService _authService;
 
-        public UsersController(UsersService service)
+        public UsersController(UsersService service, AuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<UsersDto>>> GetAllUsers()
         {
             try
@@ -82,7 +85,7 @@ namespace BoiteAIdees.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!_service.IsPasswordStrong(model.PasswordHash))
+            if (!_authService.IsPasswordStrong(model.PasswordHash))
                 return BadRequest("Le mot de passe doit contenir au moins 6 caractères, dont une majuscule, une minuscule et un chiffre.");
 
             try
@@ -134,34 +137,6 @@ namespace BoiteAIdees.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest("Erreur dans l'argument : " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erreur interne du serveur : " + ex.Message);
-            }
-        }
-
-        [HttpPost("login")]
-        public async Task<ActionResult<UsersDto>> Login(UsersLogin request)
-        {
-            try
-            {
-                var existingUser = await _service.GetUserByEmail(request.Email, request.Password);
-
-                if (existingUser == null) return BadRequest($"L'utilisateur avec l'email {request.Email} n'a pas été trouvé.");
-
-                if (!BCrypt.Net.BCrypt.Verify(request.Password, existingUser.PasswordHash)) return BadRequest("Mauvais mot de passe");
-
-                UsersDto userDto = new()
-                {
-                    UserId = existingUser.UserId,
-                    FirstName = existingUser.FirstName,
-                    LastName = existingUser.LastName,
-                    Email = existingUser.Email,
-                    Password = existingUser.PasswordHash,
-                };
-
-                return Ok(userDto);
             }
             catch (Exception ex)
             {
