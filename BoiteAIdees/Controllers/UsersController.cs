@@ -3,6 +3,7 @@ using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BoiteAIdees.Controllers
 {
@@ -85,17 +86,18 @@ namespace BoiteAIdees.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!_authService.IsPasswordStrong(model.PasswordHash))
+            if (!_authService.IsPasswordStrong(model.Password))
                 return BadRequest("Le mot de passe doit contenir au moins 6 caractères, dont une majuscule, une minuscule et un chiffre.");
 
             try
             {
+                Console.WriteLine($"Received data in CreateUser: {JsonConvert.SerializeObject(model)}");
                 Users newUser = new()
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
-                    PasswordHash = model.PasswordHash,
+                    PasswordHash = model.Password,
                 };
 
                 await _service.AddUser(newUser);
@@ -113,6 +115,7 @@ namespace BoiteAIdees.Controllers
             }
             catch (ArgumentNullException ex)
             {
+                Console.WriteLine($"Error in CreateUser: {ex.Message}");
                 return BadRequest("Erreur dans l'argument : " + ex.Message);
             }
             catch (Exception ex)

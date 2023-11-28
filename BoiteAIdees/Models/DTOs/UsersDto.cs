@@ -55,7 +55,7 @@ namespace BoiteAIdees.Models.DTOs
         /// Obtient ou définit le hachage du mot de passe de l'utilisateur.
         /// </summary>
         [Required(ErrorMessage = "Le mot de passe est requis.")]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
     }
 
     public class UsersLogin
