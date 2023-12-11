@@ -56,23 +56,26 @@ namespace BoiteAIdees.Services
         /// </summary>
         /// <param name="newIdea">Représente une idée.</param>
         /// <returns>Une idée est ajoutée.</returns>
-        public async Task<Ideas> AddIdea(Ideas newIdea)
+        public async Task<Ideas> AddIdea(int userId, Ideas newIdea)
         {
             if (newIdea == null) throw new ArgumentNullException(nameof(newIdea), "L'idée à ajouter est nulle.");
 
             try
             {
-                _context.Ideas.Add(newIdea);
+                if (newIdea.UserId == userId)
+                {
+                    _context.Ideas.Add(newIdea);
 
-                await _context.Entry(newIdea)
-                    .Reference(i => i.Category)
-                    .LoadAsync();
+                    await _context.Entry(newIdea)
+                        .Reference(i => i.Category)
+                        .LoadAsync();
 
-                await _context.Entry(newIdea)
-                    .Reference(i => i.User)
-                    .LoadAsync();
+                    await _context.Entry(newIdea)
+                        .Reference(i => i.User)
+                        .LoadAsync();
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
+                }
 
                 return newIdea;
             }
@@ -86,13 +89,14 @@ namespace BoiteAIdees.Services
         /// <summary>
         /// Permet de supprimer une idée.
         /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur.</param>
         /// <param name="id">Identifiant de l'idée.</param>
         /// <returns>Une idée est supprimé.</returns>
-        public async Task DeleteIdea(int id)
+        public async Task DeleteIdea(int userId, int id)
         {
             var idea = await GetIdeaById(id);
 
-            if (idea != null)
+            if (idea != null && idea.UserId == userId)
             {
                 _context.Ideas.Remove(idea);
                 await _context.SaveChangesAsync();
@@ -102,15 +106,20 @@ namespace BoiteAIdees.Services
         /// <summary>
         /// Permet de mettre à jour une idée.
         /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur.</param>
         /// <param name="updateIdea">Représente une idée.</param>
         /// <returns>Une idée est modifié.</returns>
-        public async Task<Ideas> UpdateIdea(Ideas updateIdea)
+        public async Task<Ideas> UpdateIdea(int userId, Ideas updateIdea)
         {
             if (updateIdea == null) throw new ArgumentNullException(nameof(updateIdea), "L'idée à mettre à jour est nulle.");
 
-            updateIdea.UpdatedAt = DateTime.Now;
-            _context.Entry(updateIdea).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            if (updateIdea.UserId == userId)
+            {
+                updateIdea.UpdatedAt = DateTime.Now;
+                _context.Entry(updateIdea).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+
             return updateIdea;
         }
 

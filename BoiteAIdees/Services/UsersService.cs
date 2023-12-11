@@ -35,7 +35,7 @@ namespace BoiteAIdees.Services
         {
             if (model == null) throw new ArgumentNullException(nameof(model), "L'utilisateur à ajouter est nulle.");
 
-            if (!_authService.IsPasswordStrong(model.PasswordHash)) throw new ArgumentException("Le mot de passe ne répond pas aux critères de sécurité.");
+            if (!_authService.IsPasswordStrong(model.PasswordHash!)) throw new ArgumentException("Le mot de passe ne répond pas aux critères de sécurité.");
 
             model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
 
