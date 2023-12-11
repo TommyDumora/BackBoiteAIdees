@@ -2,6 +2,7 @@
 using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Services;
 using BoiteAIdees.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BoiteAIdees.Controllers
 {
@@ -70,7 +71,7 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoriesDto>> CreateCategorie([FromBody] NameCategorieDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -102,7 +103,7 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteCategories([FromRoute] int id)
         {
             try
@@ -126,7 +127,7 @@ namespace BoiteAIdees.Controllers
         }
 
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateCategories(int id,[FromBody] NameCategorieDto categorieDto)
         {
             try

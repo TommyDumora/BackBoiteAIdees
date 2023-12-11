@@ -19,16 +19,14 @@ namespace BoiteAIdees.Controllers
         [HttpPost("{id:int}/like"), Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> LikeIdea(int id)
         {
-
             // Récupérez le JWT depuis la requête (vous pouvez utiliser [Authorize] pour obtenir automatiquement l'identité de l'utilisateur)
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             // Décodage du JWT pour obtenir les revendications (y compris userId)
             var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
 
             // Vérifier que le décodage du JWT n'est pas null
-            if (jsonToken == null)
+            if (handler.ReadToken(token) is not JwtSecurityToken jsonToken)
             {
                 return Unauthorized("Token JWT invalide.");
             }

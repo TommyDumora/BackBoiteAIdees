@@ -1,9 +1,11 @@
 ﻿using BoiteAIdees.Models.Domaine;
 using BoiteAIdees.Models.DTOs;
 using BoiteAIdees.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BoiteAIdees.Controllers
 {
@@ -108,7 +110,7 @@ namespace BoiteAIdees.Controllers
         /// <response code="201">L'idée a été créée avec succès.</response>
         /// <response code="400">Requête incorrecte.</response>
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,User")]
         [SwaggerOperation(
         Summary = "Permet de créer une idée",
         Description = "Permet de créer une idée et de l'ajouter en base de donnée.",
@@ -123,6 +125,24 @@ namespace BoiteAIdees.Controllers
 
             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                var handler = new JwtSecurityTokenHandler();
+
+                if (handler.ReadToken(token) is not JwtSecurityToken jsonToken)
+                {
+                    return Unauthorized("Token JWT invalide.");
+                }
+
+                var userIdClaim = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "userId");
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Revendication 'userId' manquante dans le token JWT.");
+                }
+
+                var userId = int.Parse(userIdClaim.Value);
+
                 Ideas newIdea = new()
                 {
                     Title = model.Title,
@@ -131,7 +151,7 @@ namespace BoiteAIdees.Controllers
                     UserId = model.UserId,
                 };
 
-                await _service.AddIdea(newIdea);
+                await _service.AddIdea(userId, newIdea);
 
                 IdeasDto ideasDto = new()
                 {
@@ -164,7 +184,7 @@ namespace BoiteAIdees.Controllers
         /// <response code="204">L'idée a été supprimé avec succès.</response>
         /// <response code="400">Requête incorrecte.</response>
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}"), Authorize(Roles = "Admin,User")]
         [SwaggerOperation(
         Summary = "Permet de supprimer une idée",
         Description = "Permet de supprimer une idée et de la retirer de la base de donnée.",
@@ -177,6 +197,24 @@ namespace BoiteAIdees.Controllers
         {
             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                var handler = new JwtSecurityTokenHandler();
+
+                if (handler.ReadToken(token) is not JwtSecurityToken jsonToken)
+                {
+                    return Unauthorized("Token JWT invalide.");
+                }
+
+                var userIdClaim = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "userId");
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Revendication 'userId' manquante dans le token JWT.");
+                }
+
+                var userId = int.Parse(userIdClaim.Value);
+
                 var existingIdea = await _service.GetIdeaById(id);
 
                 if (existingIdea == null)
@@ -184,7 +222,7 @@ namespace BoiteAIdees.Controllers
                     return NotFound($"L'idée avec l'id {id} n'a pas été trouvée.");
                 }
 
-                await _service.DeleteIdea(id);
+                await _service.DeleteIdea(userId, id);
 
                 return NoContent(); // Réponse 204 (No Content) requête traitée avec succès mais pas d’information à renvoyer.
             }
@@ -206,7 +244,7 @@ namespace BoiteAIdees.Controllers
         /// <response code="204">L'idée a été modifié avec succès.</response>
         /// <response code="400">Requête incorrecte.</response>
         /// <response code="500">Une erreur s'est produite lors du traitement de la requête.</response>
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}"), Authorize(Roles = "Admin,User")]
         [SwaggerOperation(
         Summary = "Permet de mettre à jour une idée",
         Description = "Permet de mettre à jour une idée .",
@@ -219,6 +257,24 @@ namespace BoiteAIdees.Controllers
         {
             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                var handler = new JwtSecurityTokenHandler();
+
+                if (handler.ReadToken(token) is not JwtSecurityToken jsonToken)
+                {
+                    return Unauthorized("Token JWT invalide.");
+                }
+
+                var userIdClaim = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "userId");
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Revendication 'userId' manquante dans le token JWT.");
+                }
+
+                var userId = int.Parse(userIdClaim.Value);
+
                 var existingIdea = await _service.GetIdeaById(id);
 
                 if (existingIdea == null)
@@ -230,7 +286,7 @@ namespace BoiteAIdees.Controllers
                 existingIdea.Description = ideaDto.Description;
                 existingIdea.CategoryId = ideaDto.CategoryId;
 
-                await _service.UpdateIdea(existingIdea);
+                await _service.UpdateIdea(userId, existingIdea);
 
                 return NoContent();
             }

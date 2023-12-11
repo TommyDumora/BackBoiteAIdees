@@ -47,7 +47,7 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}"), Authorize(Roles = "Admin,User")]
         public async Task<ActionResult<UsersDto>> GetUserById([FromRoute] int id)
         {
             try
@@ -124,7 +124,7 @@ namespace BoiteAIdees.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}"), Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> DeleteUser([FromRoute] int id)
         {
             try
